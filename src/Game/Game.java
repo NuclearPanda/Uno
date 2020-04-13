@@ -2,6 +2,7 @@ package Game;
 
 import Players.Player;
 
+import java.io.IOException;
 import java.util.List;
 import java.util.Stack;
 
@@ -18,11 +19,11 @@ public class Game {
         cardStack.add(draw());
     }
 
-    public void nextTurn() {
+    public void nextTurn() throws IOException { // ioexception for human player reading input from standard input
         incrementCurrentPlayerIndex();
         Player currentPlayer = players.get(currentPlayerIndex);
         if (currentPlayer.canPlayCard(getTopCard())) {
-            playCard(currentPlayer.playCard());
+            playCard(currentPlayer.playCard(getTopCard()));
             if (currentPlayer.cardsLeft() == 0) {
                 winner = currentPlayer;
             }
@@ -36,7 +37,7 @@ public class Game {
         }
     }
 
-    private void playCard(Card card) {
+    private void playCard(Card card) throws IOException {
         if (!card.matches(getTopCard())) {
             throw new RuntimeException("The played card does not match the top card"); // should never be thrown but just in case
         }
@@ -88,7 +89,7 @@ public class Game {
         return cardStack.peek();
     }
 
-    private void resolveCardEffects(Card card) {
+    private void resolveCardEffects(Card card) throws IOException {
         switch (card.getValue()) {
             case "+2":
                 getNextPlayer().addCards(draw(2));

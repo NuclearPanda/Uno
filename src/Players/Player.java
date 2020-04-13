@@ -3,8 +3,13 @@ package Players;
 import Game.Card;
 import Game.Color;
 
+import java.io.IOException;
+
 public interface Player {
-    Card playCard();
+
+    String getName();
+
+    Card playCard(Card topCard) throws IOException;
 
     void addCard(Card newCard);
 
@@ -14,5 +19,5 @@ public interface Player {
 
     boolean canPlayCard(Card topCard);
 
-    Color chooseColor();
+    Color chooseColor() throws IOException;
 }

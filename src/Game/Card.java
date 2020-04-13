@@ -49,4 +49,27 @@ public class Card {
         }
         return color == otherCard.color || value.equals(otherCard.value);
     }
+
+    @Override
+    public String toString() {
+        StringBuilder sb = new StringBuilder();
+        switch (color) {
+            case RED:
+                sb.append("Red ");
+                break;
+            case BLUE:
+                sb.append("Blue ");
+                break;
+            case BLACK:
+                sb.append("Black ");
+                break;
+            case GREEN:
+                sb.append("Green ");
+                break;
+            case YELLOW:
+                sb.append("Yellow ");
+        }
+        sb.append(value);
+        return sb.toString();
+    }
 }
