@@ -1,8 +1,10 @@
 package Game;
 
+import Players.HumanPlayer;
 import Players.Player;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Stack;
 
@@ -17,24 +19,32 @@ public class Game {
     public Game(List<Player> players) {
         this.players = players;
         cardStack.add(draw());
+        for (Player player : players) {
+            player.addCards(draw(7));
+        }
     }
 
     public void nextTurn() throws IOException { // ioexception for human player reading input from standard input
-        incrementCurrentPlayerIndex();
         Player currentPlayer = players.get(currentPlayerIndex);
+        System.out.println("The current player is " + currentPlayer.getName());
         if (currentPlayer.canPlayCard(getTopCard())) {
             playCard(currentPlayer.playCard(getTopCard()));
             if (currentPlayer.cardsLeft() == 0) {
                 winner = currentPlayer;
             }
         } else {
+            System.out.println(currentPlayer + " is unable to play a card, drawing a card");
             Card newCard = draw();
+            System.out.println("Drew " + newCard);
             if (newCard.matches(getTopCard())) {
+                System.out.println("Playing " + newCard);
                 playCard(newCard);
             } else {
+                System.out.println("New card is also unplayable, skipping turn");
                 currentPlayer.addCard(newCard);
             }
         }
+        incrementCurrentPlayerIndex();
     }
 
     private void playCard(Card card) throws IOException {
@@ -47,13 +57,13 @@ public class Game {
 
     private int getNextPlayerIndex() {
         if (direction) {
-            if (currentPlayerIndex == players.size()) {
+            if (currentPlayerIndex + 1 == players.size()) {
                 return 0;
             }
             return currentPlayerIndex + 1;
         } else {
             if (currentPlayerIndex == 0) {
-                return players.size();
+                return players.size() - 1;
             } else return currentPlayerIndex - 1;
         }
     }
@@ -93,9 +103,12 @@ public class Game {
         switch (card.getValue()) {
             case "+2":
                 getNextPlayer().addCards(draw(2));
+                incrementCurrentPlayerIndex();
                 break;
             case "+4":
                 getNextPlayer().addCards(draw(4));
+                card.setColor(players.get(currentPlayerIndex).chooseColor());
+                incrementCurrentPlayerIndex();
                 break;
             case "swap":
                 direction = !direction;
@@ -111,5 +124,16 @@ public class Game {
 
     public Player getWinner() {
         return winner;
+    }
+
+    public static void main(String[] args) throws IOException {
+        ArrayList<Player> players = new ArrayList<>();
+        players.add(new HumanPlayer("player 1"));
+        players.add(new HumanPlayer("player 2"));
+        Game game = new Game(players);
+        while (game.winner == null) {
+            game.nextTurn();
+        }
+        System.out.println(game.winner + " won the game.");
     }
 }

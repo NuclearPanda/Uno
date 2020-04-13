@@ -12,7 +12,7 @@ import java.util.List;
 
 public class HumanPlayer implements Player {
     private String name;
-    private List<Card> hand;
+    private List<Card> hand = new ArrayList<>();
     private BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
 
     @Override
@@ -20,8 +20,7 @@ public class HumanPlayer implements Player {
         return name;
     }
 
-    public HumanPlayer(List<Card> hand, String name) {
-        this.hand = hand;
+    public HumanPlayer(String name) {
         this.name = name;
     }
 
@@ -45,8 +44,12 @@ public class HumanPlayer implements Player {
             String line = reader.readLine();
             try {
                 int choice = Integer.parseInt(line.strip());
+                if (choice >= cardsLeft()) {
+                    System.out.println("Index out of range, try again");
+                    continue;
+                }
                 if (playableCards.contains(hand.get(choice))) {
-                    return hand.get(choice);
+                    return hand.remove(choice);
                 } else {
                     System.out.println("That card doesn't match the top card, choose another");
                 }
@@ -95,5 +98,10 @@ public class HumanPlayer implements Player {
                     System.out.println("Color not recognized, try again");
             }
         }
+    }
+
+    @Override
+    public String toString() {
+        return getName();
     }
 }
